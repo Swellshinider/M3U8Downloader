@@ -5,19 +5,19 @@ namespace MD.Infra.Commands;
 /// </summary>
 internal sealed class Command
 {
-    private readonly Func<string?, ExecutionResult> _action;
-
     public delegate bool Validator(string? input, out string message);
-    private readonly List<Validator> _validators;
+
+    private Func<string?, Task<ExecutionResult>> _action;
+    private readonly Validator? _validator;
 
     /// <summary>
     /// Constructs a new instance of the <see cref="Command"/> class.
     /// </summary>
-    public Command(CommandType commandType, Func<string?, ExecutionResult> action, List<Validator>? validators = null)
+    public Command(CommandType commandType, Func<string?, Task<ExecutionResult>> action, Validator? validator = null)
     {
         Type = commandType;
         _action = action;
-        _validators = validators ?? [];
+        _validator = validator;
     }
 
     /// <summary>
@@ -44,14 +44,11 @@ internal sealed class Command
     /// <returns>
     /// True if the command was executed successfully, false otherwise.
     /// </returns>
-    public ExecutionResult Execute(string? args)
+    public async Task<ExecutionResult> Execute(string? args)
     {
-        foreach (var validator in _validators)
-        {
-            if (!validator(args, out var message))
-                return ExecutionResult.FailValidation(message);
-        }
+        if (_validator is not null && !_validator(args, out var message))
+            return ExecutionResult.FailValidation(message);
 
-        return _action(args);
+        return await _action(args);
     }
 }

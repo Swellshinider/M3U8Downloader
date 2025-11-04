@@ -4,7 +4,7 @@ namespace MD.Infra;
 
 public static class Application
 {
-    public static void Run()
+    public static async Task Run()
     {
         "Welcome to LealVault CLI!\nType ".Write();
         "help ".Write(ConsoleColor.Green);
@@ -17,7 +17,7 @@ public static class Application
         while (true)
         {
             var input = repl.Run(prompt);
-            var executionResult = CommandHandler.Execute(input);
+            var executionResult = await CommandHandler.Execute(input);
 
             $"{executionResult.Message}".WriteLine(executionResult.Success
                                                                 ? ConsoleColor.Green 
