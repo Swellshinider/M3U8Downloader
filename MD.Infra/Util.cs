@@ -1,4 +1,3 @@
-
 namespace MD.Infra;
 
 /// <summary>
@@ -9,7 +8,7 @@ public static class Util
     /// <summary>
     /// Check if string is null or empty or whitespace
     /// </summary>
-    public static bool IsNull(this string? str) => string.IsNullOrEmpty(str) || string.IsNullOrWhiteSpace(str);
+    internal static bool IsNull(this string? str) => string.IsNullOrEmpty(str) || string.IsNullOrWhiteSpace(str);
 
     /// <summary>
     /// Write with color
@@ -34,7 +33,7 @@ public static class Util
     /// <summary>
     /// Confirm user action
     /// </summary>
-    public static bool ConfirmUserAction(string message = "Are you sure you want to continue?")
+    internal static bool ConfirmUserAction(string message = "Are you sure you want to continue?")
     {
         $"{message} (Y/n): ".Write();
         var input = (Console.ReadLine() ?? "").Trim().ToLower();
@@ -43,5 +42,18 @@ public static class Util
             return true;
 
         return input == "y";
+    }
+
+    internal static string AskUntilNotEmpty(this Repl.Repl repl, string question)
+    {
+        while (true)
+        {
+            var res = repl.Run(question);
+
+            if (!res.IsNull())
+                return res;
+
+            "Please, provide a valid value".WriteLine(ConsoleColor.Yellow);
+        }
     }
 }

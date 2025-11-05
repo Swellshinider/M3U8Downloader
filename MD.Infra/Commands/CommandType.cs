@@ -11,5 +11,4 @@ internal enum CommandType
     Status,
     Stop,
     Start,
-    Pattern
 }
