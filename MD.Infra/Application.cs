@@ -1,4 +1,5 @@
 using MD.Infra.Commands;
+using Xabe.FFmpeg.Downloader;
 
 namespace MD.Infra;
 
@@ -6,6 +7,11 @@ public static class Application
 {
     public static async Task Run()
     {
+        "Checking for FFmpeg binaries...".WriteLine();
+        await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official);
+        "FFmpeg is ready.".WriteLine(ConsoleColor.Green);
+        "\n".WriteLine();
+        
         "Welcome to LealVault CLI!\nType ".Write();
         "help ".Write(ConsoleColor.Green);
         "to see available commands.\n".WriteLine();
@@ -20,7 +26,7 @@ public static class Application
             var executionResult = await CommandHandler.Execute(input);
 
             $"{executionResult.Message}".WriteLine(executionResult.Success
-                                                                ? ConsoleColor.Green 
+                                                                ? ConsoleColor.Green
                                                                 : ConsoleColor.Red);
             if (executionResult.ShouldExit)
             {

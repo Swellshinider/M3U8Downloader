@@ -1,3 +1,10 @@
 # Ignore build output directories
 **/bin
 **/obj
+
+# Ignore FFMPEG binaries
+ffmpeg
+ffmpeg.exe
+ffprobe
+ffprobe.exe
+version.json

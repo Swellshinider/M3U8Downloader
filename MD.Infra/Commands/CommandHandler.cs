@@ -47,6 +47,11 @@ public static class CommandHandler
             Description = "Displays the current download status.",
             Usage = "status | Displays whether a download is in progress or not."
         },
+        new(CommandType.Pattern, SetPatternFileName, ArgumentCantBeNull)
+        {
+            Description = "Sets the pattern for naming downloaded files.",
+            Usage = "pattern <pattern> | Sets the naming pattern for downloaded files. Files will be generated like 'patter_{index}'."
+        },
         new(CommandType.Output, SetOutputDirectory, ArgumentCantBeNull)
         {
             Description = "Sets the output directory for downloads.",
@@ -151,14 +156,27 @@ public static class CommandHandler
         try
         {
             await _downloadManager.DisplayStatus();
-            return new ExecutionResult(true, "Status displayed.");
+            return ExecutionResult.SuccessNoMessage();
         }
         catch (Exception e)
         {
             return new ExecutionResult(false, e.Message);
         }
     }
-    
+
+    private static async Task<ExecutionResult> SetPatternFileName(string? arg)
+    {
+        try
+        {
+            _downloadManager.SetPatternFileName(arg!);
+            return new ExecutionResult(true, $"Pattern file name set to '{arg}'.");
+        }
+        catch (Exception e)
+        {
+            return new ExecutionResult(false, e.Message);
+        }
+    }
+
     private static async Task<ExecutionResult> SetOutputDirectory(string? arg)
     {
         try
@@ -176,7 +194,7 @@ public static class CommandHandler
     {
         try
         {
-            await _downloadManager.Start();
+            _downloadManager.Start(); 
             return new ExecutionResult(true, "Download started. You can monitor the progress by typing 'status'.");
         }
         catch (Exception e)
@@ -197,7 +215,7 @@ public static class CommandHandler
 
             "Stopping download...".WriteLine();
             _downloadManager.Stop();
-            return new ExecutionResult(true, "DOwnload stopped successfully.");
+            return new ExecutionResult(true, "Download stopped successfully.");
         }
         catch (Exception e)
         {
